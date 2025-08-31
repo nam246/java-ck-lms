@@ -23,7 +23,7 @@ bin/
 /.nb-gradle/
 
 ## Jetbrains
-.idea
+.idea/*
 
 ### VS Code ###
 .vscode/
