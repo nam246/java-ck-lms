@@ -1,7 +1,8 @@
 package citd.nhom99.ck.config;
 
-import citd.nhom99.ck.model.Gender;
-import citd.nhom99.ck.model.Role;
+import citd.nhom99.ck.model.*;
+import citd.nhom99.ck.utils.Helper;
+import citd.nhom99.ck.utils.QueryHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,9 +12,6 @@ import java.sql.Statement;
 
 public class InitData {
 
-    /**
-     * Inserts sample data into the database only if the database is empty.
-     */
     public static void seedDatabaseIfEmpty() {
         if (isDatabaseEmpty()) {
             System.out.println("Database is empty. Seeding with sample data...");
@@ -25,148 +23,77 @@ public class InitData {
 
     private static boolean isDatabaseEmpty() {
         String sql = "SELECT COUNT(user_id) FROM users";
-        try (Connection conn = DBConfig.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection conn = DBConfig.getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getInt(1) == 0;
             }
         } catch (SQLException e) {
-            // This might happen if the table doesn't exist yet, which is fine.
-            // We assume it's empty.
             return true;
         }
         return false;
     }
 
     private static void insertSampleData() {
-        String insertUserSQL = "INSERT INTO users(username, password, full_name, phone_number, email, gender, role) VALUES(?, ?, ?, ?, ?, ?, ?)";
-        String insertTeacherSQL = "INSERT INTO teachers(user_id, teacher_id, subject) VALUES(?, ?, ?)";
-        String insertStudentSQL = "INSERT INTO students(user_id, student_id, average_grade) VALUES(?, ?, ?)";
-        String insertClassroomSQL = "INSERT INTO classrooms(class_name, gvcn_id) VALUES(?, ?)";
-        String insertClassroomStudentSQL = "INSERT INTO classroom_student(class_id, student_user_id) VALUES(?, ?)";
+        // Admin
+        User admin = new User("admin", "admin", "Admin", "0987654321", "admin@admin.edu.vn", Gender.MALE, Role.ADMIN);
+        QueryHelper.insertUser(admin, Role.ADMIN);
 
-        try (Connection conn = DBConfig.getConnection()) {
-            // Disable auto-commit for transaction
-            conn.setAutoCommit(false);
+        // Thêm vào bảng môn học
+        QueryHelper.insertSubject("Math");
+        QueryHelper.insertSubject("Physics");
+        QueryHelper.insertSubject("Chemistry");
+        QueryHelper.insertSubject("Biology");
+        QueryHelper.insertSubject("Foreign Language");
+        QueryHelper.insertSubject("Literature");
+        QueryHelper.insertSubject("History");
+        QueryHelper.insertSubject("Geography");
 
-            try (PreparedStatement userPstmt = conn.prepareStatement(insertUserSQL);
-                 PreparedStatement teacherPstmt = conn.prepareStatement(insertTeacherSQL);
-                 PreparedStatement studentPstmt = conn.prepareStatement(insertStudentSQL);
-                 PreparedStatement classroomPstmt = conn.prepareStatement(insertClassroomSQL);
-                 PreparedStatement classroomStudentPstmt = conn.prepareStatement(insertClassroomStudentSQL)) {
+        // Thêm vào bảng học sinh
+        User student1 = new User("cuong.lv", "123456789", "Lê Văn Cường", "0911111111", "cuong.lv@student.edu.vn", Gender.MALE, Role.STUDENT);
+        User student2 = new User("dung.mt", "123456789", "Mai Thị Dung", "0911111112", "dung.mt@student.edu.vn", Gender.FEMALE, Role.STUDENT);
+        User student3 = new User("hoa.tt", "123456789", "Trần Thị Hoa", "0911111113", "hoa.tt@student.edu.vn", Gender.FEMALE, Role.STUDENT);
+        User student4 = new User("nam.nv", "123456789", "Nguyễn Văn Nam", "0911111114", "nam.nv@student.edu.vn", Gender.MALE, Role.STUDENT);
+        User student5 = new User("linh.ht", "123456789", "Hoàng Thị Linh", "0911111115", "linh.ht@student.edu.vn", Gender.FEMALE, Role.STUDENT);
+        User student6 = new User("hai.pv", "123456789", "Phạm Văn Hải", "0911111116", "hai.pv@student.edu.vn", Gender.MALE, Role.STUDENT);
+        User student7 = new User("trang.lt", "123456789", "Lê Thị Trang", "0911111117", "trang.lt@student.edu.vn", Gender.FEMALE, Role.STUDENT);
+        User student8 = new User("son.tv", "123456789", "Trần Văn Sơn", "0911111118", "son.tv@student.edu.vn", Gender.MALE, Role.STUDENT);
+        User student9 = new User("thao.tt", "123456789", "Nguyễn Thị Thảo", "0911111119", "thao.nt@student.edu.vn", Gender.FEMALE, Role.STUDENT);
+        User student10 = new User("tuan.hv", "123456789", "Hoàng Văn Tuấn", "0911111120", "tuan.hv@student.edu.vn", Gender.MALE, Role.STUDENT);
 
-                // Admin
-                userPstmt.setString(1, "admin");
-                userPstmt.setString(2, "admin");
-                userPstmt.setString(3, "Admin");
-                userPstmt.setString(4, "090111222");
-                userPstmt.setString(5, "admin@edu.vn");
-                userPstmt.setString(6, Gender.MALE.name());
-                userPstmt.setString(7, Role.ADMIN.name());
-                userPstmt.addBatch();
+        QueryHelper.insertStudent(student1);
+        QueryHelper.insertStudent(student2);
+        QueryHelper.insertStudent(student3);
+        QueryHelper.insertStudent(student4);
+        QueryHelper.insertStudent(student5);
+        QueryHelper.insertStudent(student6);
+        QueryHelper.insertStudent(student7);
+        QueryHelper.insertStudent(student8);
+        QueryHelper.insertStudent(student9);
+        QueryHelper.insertStudent(student10);
 
-                // Teacher 1
-                userPstmt.setString(1, "gv.an");
-                userPstmt.setString(2, "password123");
-                userPstmt.setString(3, "Nguyễn Văn An");
-                userPstmt.setString(4, "090111222");
-                userPstmt.setString(5, "an.nv@edu.vn");
-                userPstmt.setString(6, Gender.MALE.name());
-                userPstmt.setString(7, Role.TEACHER.name());
-                userPstmt.addBatch();
+        // Thêm vào bảng giáo viên
+        User teacher1 = new User("teacher1", "teacher1", "Nguyễn Văn An", "0901111111", "an.nv@edu.vn", Gender.MALE, Role.TEACHER);
+        User teacher2 = new User("teacher2", "teacher2", "Trần Thị Bình", "0901111112", "binh.tt@edu.vn", Gender.FEMALE, Role.TEACHER);
+        User teacher3 = new User("teacher3", "teacher3", "Lê Văn Cường", "0901111113", "cuong.lv@edu.vn", Gender.MALE, Role.TEACHER);
+        User teacher4 = new User("teacher4", "teacher4", "Phạm Thị Dung", "0901111114", "dung.pt@edu.vn", Gender.FEMALE, Role.TEACHER);
+        User teacher5 = new User("teacher5", "teacher5", "Hoàng Văn Hùng", "0901111115", "hung.hv@edu.vn", Gender.MALE, Role.TEACHER);
+        User teacher6 = new User("teacher6", "teacher6", "Ngô Thị Lan", "0901111116", "lan.nt@edu.vn", Gender.FEMALE, Role.TEACHER);
+        User teacher7 = new User("teacher7", "teacher7", "Vũ Văn Minh", "0901111117", "minh.vv@edu.vn", Gender.MALE, Role.TEACHER);
+        User teacher8 = new User("teacher8", "teacher8", "Đào Thị Nga", "0901111118", "nga.dt@edu.vn", Gender.FEMALE, Role.TEACHER);
 
-                teacherPstmt.setInt(1, 2);
-                teacherPstmt.setString(2, "GV001");
-                teacherPstmt.setString(3, "Toán cao cấp");
-                teacherPstmt.addBatch();
+        QueryHelper.insertTeacher(teacher1, 1);
+        QueryHelper.insertTeacher(teacher2, 2);
+        QueryHelper.insertTeacher(teacher3, 3);
+        QueryHelper.insertTeacher(teacher4, 4);
+        QueryHelper.insertTeacher(teacher5, 5);
+        QueryHelper.insertTeacher(teacher6, 6);
+        QueryHelper.insertTeacher(teacher7, 7);
+        QueryHelper.insertTeacher(teacher8, 8);
 
-                // Teacher 2
-                userPstmt.setString(1, "gv.binh");
-                userPstmt.setString(2, "password123");
-                userPstmt.setString(3, "Trần Thị Bình");
-                userPstmt.setString(4, "090333444");
-                userPstmt.setString(5, "binh.tt@edu.vn");
-                userPstmt.setString(6, Gender.FEMALE.name());
-                userPstmt.setString(7, Role.TEACHER.name());
-                userPstmt.addBatch();
-
-                teacherPstmt.setInt(1, 3);
-                teacherPstmt.setString(2, "GV002");
-                teacherPstmt.setString(3, "Lập trình Java");
-                teacherPstmt.addBatch();
-
-                // Student 1
-                userPstmt.setString(1, "sv.cuong");
-                userPstmt.setString(2, "password123");
-                userPstmt.setString(3, "Lê Văn Cường");
-                userPstmt.setString(4, "091555666");
-                userPstmt.setString(5, "cuong.lv@student.edu.vn");
-                userPstmt.setString(6, Gender.MALE.name());
-                userPstmt.setString(7, Role.STUDENT.name());
-                userPstmt.addBatch();
-
-                studentPstmt.setInt(1, 4);
-                studentPstmt.setString(2, "SV001");
-                studentPstmt.setDouble(3, 8.5);
-                studentPstmt.addBatch();
-
-                // Student 2
-                userPstmt.setString(1, "sv.dung");
-                userPstmt.setString(2, "password123");
-                userPstmt.setString(3, "Mai Thị Dung");
-                userPstmt.setString(4, "091777888");
-                userPstmt.setString(5, "dung.mt@student.edu.vn");
-                userPstmt.setString(6, Gender.FEMALE.name());
-                userPstmt.setString(7, Role.STUDENT.name());
-                userPstmt.addBatch();
-
-                studentPstmt.setInt(1, 5);
-                studentPstmt.setString(2, "SV002");
-                studentPstmt.setDouble(3, 7.2);
-                studentPstmt.addBatch();
-
-                // Execute batch inserts for users, teachers, students
-                userPstmt.executeBatch();
-                teacherPstmt.executeBatch();
-                studentPstmt.executeBatch();
-
-                // Insert Classrooms
-                classroomPstmt.setString(1, "Lớp Toán cao cấp 2025");
-                classroomPstmt.setInt(2, 2); // GV An
-                classroomPstmt.addBatch();
-
-                classroomPstmt.setString(1, "Lớp Lập trình Java 2025");
-                classroomPstmt.setInt(2, 3); // GV Binh
-                classroomPstmt.addBatch();
-
-                classroomPstmt.executeBatch();
-
-                // Assign students to classrooms
-                // Assign student Cuong (user_id 4) to class 1
-                classroomStudentPstmt.setInt(1, 1);
-                classroomStudentPstmt.setInt(2, 4);
-                classroomStudentPstmt.addBatch();
-
-                // Assign student Dung (user_id 5) to class 2
-                classroomStudentPstmt.setInt(1, 2);
-                classroomStudentPstmt.setInt(2, 5);
-                classroomStudentPstmt.addBatch();
-
-                classroomStudentPstmt.executeBatch();
-
-                // Commit the transaction
-                conn.commit();
-                System.out.println("Sample data inserted successfully.");
-
-            } catch (SQLException e) {
-                // Rollback in case of an error
-                conn.rollback();
-                System.err.println("Error inserting sample data. Transaction was rolled back.");
-//                e.printStackTrace();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        // Thêm lớp
+        Classroom class10A1 = new Classroom("10A1", 12);
+        Classroom class11B2 = new Classroom("11B2", 13);
+        QueryHelper.insertClassroom(class10A1);
+        QueryHelper.insertClassroom(class11B2);
     }
 }

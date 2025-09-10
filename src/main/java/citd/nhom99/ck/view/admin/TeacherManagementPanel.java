@@ -1,9 +1,6 @@
 package citd.nhom99.ck.view.admin;
 
-import citd.nhom99.ck.dao.TeacherDAO;
-import citd.nhom99.ck.dao.UserDAO;
-import citd.nhom99.ck.dao.impl.TeacherDAOImpl;
-import citd.nhom99.ck.dao.impl.UserDAOImpl;
+import citd.nhom99.ck.controller.TeacherController;
 import citd.nhom99.ck.model.Gender;
 import citd.nhom99.ck.model.Role;
 import citd.nhom99.ck.model.Teacher;
@@ -15,8 +12,7 @@ import java.awt.*;
 import java.util.List;
 
 public class TeacherManagementPanel extends JPanel {
-    private final UserDAO userDao = new UserDAOImpl();
-    private final TeacherDAO teacherDAO = new TeacherDAOImpl();
+    private final TeacherController teacherController = new TeacherController();
     private JTable teacherTable;
     private DefaultTableModel tableModel;
 
@@ -66,7 +62,7 @@ public class TeacherManagementPanel extends JPanel {
 
         // Tạo table model với các cột
         String[] columnNames = {
-                "ID", "Mã GV", "Họ và tên", "Email", "Số điện thoại", "Giới tính", "Địa chỉ", "Lớp"
+                "ID", "Mã GV", "Họ và tên", "Email", "Số điện thoại", "Giới tính", "Lớp chủ nhiệm", "Môn dạy"
         };
 
         tableModel = new DefaultTableModel(columnNames, 0);
@@ -118,7 +114,6 @@ public class TeacherManagementPanel extends JPanel {
     }
 
     private void handleAddTeacher() {
-        System.out.println("Add teacher clicked");
         JDialog addNewTeacherDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm giáo viên mới", true);
         addNewTeacherDialog.setLayout(new BorderLayout());
         addNewTeacherDialog.setSize(400, 500);
@@ -195,9 +190,8 @@ public class TeacherManagementPanel extends JPanel {
                 Gender gender = (Gender) genderField.getSelectedItem();
 
                 User newUser = new User(username, password, fullName, phoneNumber, email, gender, Role.TEACHER);
-                teacherDAO.addTeacher(newUser);
+                teacherController.addTeacher(newUser);
                 JOptionPane.showMessageDialog(addNewTeacherDialog, "Thêm giáo viên thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                System.out.println("New teacher added: " + newUser.getFullName());
                 addNewTeacherDialog.dispose();
                 loadTeacherData();
 
@@ -222,40 +216,44 @@ public class TeacherManagementPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Xin vui lòng chọn dòng cần xóa trước.", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String teacherId = (String) teacherTable.getValueAt(selectedRow, 1);
+        int teacherUserId = (int) teacherTable.getValueAt(selectedRow, 0);
         try {
-            this.teacherDAO.deleteTeacher(teacherId);
-            loadTeacherData();
-            JOptionPane.showMessageDialog(this, "Deleted Teacher ID: " + teacherId);
+            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc xóa dữ liệu này?" + teacherUserId);
+            if (confirm == JOptionPane.YES_OPTION) {
+                teacherController.deleteTeacher(teacherUserId);
+                loadTeacherData();
+                JOptionPane.showMessageDialog(this, "Đã xóa ID: " + teacherUserId);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     private void loadTeacherData() {
-        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        // Xóa dữ liệu cũ
+        tableModel.setRowCount(0);
 
         try {
-            List<Teacher> teachers = teacherDAO.getAllTeachers();
+            List<Teacher> teachers = teacherController.getAllTeachers();
             for (Teacher teacher : teachers) {
                 if (teacher.getUser() != null) {
+
                     Object[] rowData = {
                             teacher.getUser().getUserId(),
-                            teacher.getTeacherId(),
+                            teacher.getTeacherCode(),
                             teacher.getUser().getFullName(),
                             teacher.getUser().getEmail(),
                             teacher.getUser().getPhoneNumber(),
                             teacher.getUser().getGender(),
-    //                        teacher.getAverageGrade(),
-    //                        teacher.getAddress(),
-    //                        teacher.getClassName() != null ? teacher.getClassName() : "Chưa có lớp"
+                            teacher.getClassroomId() != 0 ? teacher.getClassroomId() : "Không chủ nhiệm",
+                            teacher.getSubjectId()
                     };
                     tableModel.addRow(rowData);
                 }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                    "Lỗi khi tải dữ liệu sinh viên: " + e.getMessage(),
+                    "Lỗi khi tải dữ liệu giáo viên: " + e.getMessage(),
                     "Lỗi",
                     JOptionPane.ERROR_MESSAGE);
         }

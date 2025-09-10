@@ -1,0 +1,53 @@
+tôi thấy tạo các class trong model nhưng không sử dụng làm cho việc code dư thừa  │
+╰──────────────────────────────────────────────────────────────────────────────────────╯
+
+✦ Bạn đã đưa ra một quan sát rất tinh tế, và đây là một băn khoăn chính đáng khi mới làm quen với các kiến trúc phần mềm nhiều lớp. Cảm giác code bị dư thừa là một dấu hiệu tốt, cho thấy bạn đang suy nghĩ về
+  việc tối ưu hóa.
+
+  Tuy nhiên, trong trường hợp này, các class trong model không hề dư thừa. Chúng đang được sử dụng, nhưng có lẽ không theo cách bạn đang hình dung. Cách chúng được "sử dụng" tinh vi hơn là chỉ new
+  Student() trong hàm main.
+
+  Hãy xem xét luồng hoạt động thực tế của một ứng dụng để thấy chúng được dùng ở đâu và như thế nào.
+
+  "Sử dụng" không chỉ là new - Nó là "Hộp chứa dữ liệu" và "Bản hợp đồng"
+
+  Hãy tưởng tượng kịch bản: "Người dùng nhấn nút để xem danh sách tất cả sinh viên trên giao diện".
+
+  Đây là những gì xảy ra phía sau hậu trường:
+
+   1. `View` (Giao diện): DashboardFrame của bạn nhận được sự kiện click chuột. Nó không biết gì về database. Nó chỉ biết cần phải hiển thị sinh viên.
+   Nó sẽ gọi một lớp điều khiển (ví dụ LMSController) và nói: "Này, cho tôi danh sách sinh viên."
+
+   2. `Controller` (Lớp điều khiển): Lớp này nhận yêu cầu từ View. Nó cũng không biết cách nói chuyện với database.
+   Nó chỉ biết rằng StudentDAO có khả năng lấy dữ liệu sinh viên. Nó sẽ gọi:
+      studentDAO.getAllStudents().
+
+   3. `DAO` (Lớp truy cập dữ liệu): Đây là lúc các lớp model tỏa sáng.
+       * StudentDAO kết nối tới database, chạy câu lệnh SELECT * FROM users INNER JOIN students ON users.user_id = students.user_id;.
+       * Nó nhận về một ResultSet - một đống dữ liệu thô, vô định hình.
+       * Câu hỏi đặt ra: Làm thế nào để StudentDAO trả về dữ liệu này một cách có cấu trúc, sạch sẽ cho Controller?
+       * Câu trả lời: Nó sẽ duyệt qua từng dòng của ResultSet, và với mỗi dòng, nó tạo ra một đối tượng: new User(...) và new Student(...). Nó nhét dữ liệu từ database (tên, mã sinh viên, điểm) vào trong các
+         đối tượng này.
+       * Cuối cùng, StudentDAO trả về một List<Student>.
+
+   4. Quay trở lại `View`: List<Student> này được trả ngược lại cho Controller, rồi tới View. Giờ đây, DashboardFrame của bạn nhận được một danh sách các đối tượng Student sạch sẽ. Nó chỉ việc duyệt qua danh
+      sách này và gọi student.getUser().getFullName(), student.getStudentId() để đưa vào bảng hiển thị.
+
+  Phân tích
+
+  Bạn thấy đấy, lớp Student không hề dư thừa. Nó được sử dụng liên tục như một "chiếc hộp đựng dữ liệu" (Data Carrier), được chuyền tay qua lại giữa các lớp (DAO -> Controller -> View).
+
+  Nếu không có lớp Student, StudentDAO sẽ phải trả về cái gì?
+   * Một List<Object[]>? Lúc đó ở View bạn phải lấy dữ liệu bằng (String)data[0], (float)data[2]. Rất xấu và dễ lỗi.
+   * Một List<Map<String, Object>>? Ở View bạn phải lấy bằng (String)map.get("full_name"). Nếu bạn gõ sai tên cột, chương trình chỉ báo lỗi lúc chạy chứ không báo lỗi lúc biên dịch.
+
+  Lớp Student trong model đóng vai trò như một "bản hợp đồng" rõ ràng giữa các lớp:
+   * StudentDAO hứa sẽ trả về dữ liệu đúng theo cấu trúc của Student.
+   * View biết rằng nó sẽ nhận được dữ liệu đúng theo cấu trúc của Student.
+
+  Kết luận:
+
+  Các lớp trong model không phải là code "chết" hay "dư thừa". Chúng là ngôn ngữ chung mà toàn bộ ứng dụng của bạn sử dụng để giao tiếp. Chúng định hình cách dữ liệu được di chuyển, đảm bảo tính toàn vẹn,
+  dễ đọc và an toàn kiểu (type-safe) cho cả hệ thống.
+
+  Việc không thấy chúng được new ở khắp nơi chính là một dấu hiệu của thiết kế tốt, vì việc tạo ra chúng đã được đóng gói gọn gàng bên trong lớp DAO.

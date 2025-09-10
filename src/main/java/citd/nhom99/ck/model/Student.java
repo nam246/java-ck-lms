@@ -1,30 +1,47 @@
 package citd.nhom99.ck.model;
 
 public class Student {
-    private String studentId;
+    private int userId;
     private User user;
-    private float averageGrade;
+    private String studentCode;
+    private int studentGradeId;
+    private StudentGrade studentGrade;
+    private int classroomId;
+    private Classroom classroom;
 
     public Student() {
     }
 
-    public Student(String studentId, User user) {
-        this.studentId = studentId;
+    public Student(String studentCode, User user) {
+        this.studentCode = studentCode;
         this.user = user;
     }
 
-    public Student(String studentId, User user, float averageGrade) {
-        this.studentId = studentId;
+    public Student(String studentCode, User user, StudentGrade studentGrade) {
+        this.studentCode = studentCode;
         this.user = user;
-        this.averageGrade = averageGrade;
+        this.studentGrade = studentGrade;
     }
 
-    public String getStudentId() {
-        return studentId;
+    public Student(String studentCode, int studentGradeId, int classroomId) {
+        this.studentCode = studentCode;
+        this.studentGradeId = studentGradeId;
+        this.classroomId = classroomId;
     }
 
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
+    public Student(String studentCode, User user, StudentGrade studentGrade, Classroom classroom) {
+        this.studentCode = studentCode;
+        this.user = user;
+        this.studentGrade = studentGrade;
+        this.classroom = classroom;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public User getUser() {
@@ -35,22 +52,46 @@ public class Student {
         this.user = user;
     }
 
-    public float getAverageGrade() {
-        return averageGrade;
+    public String getStudentCode() {
+        return studentCode;
     }
 
-    public void setAverageGrade(float averageGrade) {
-        this.averageGrade = averageGrade;
+    public void setStudentCode(String studentCode) {
+        this.studentCode = studentCode;
+    }
+
+    public StudentGrade getStudentGrade() {
+        return studentGrade;
+    }
+
+    public void setStudentGrade(StudentGrade averageGrade) {
+        this.studentGrade = averageGrade;
+    }
+
+    public int getClassroomId() {
+        return classroomId;
+    }
+
+    public void setClassroomId(int classroomId) {
+        this.classroomId = classroomId;
+    }
+
+    public Classroom getClassroom() {
+        return classroom;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
     }
 
     @Override
     public String toString() {
         return "Student{" +
                 "userId=" + user.getUserId() +
-                "studentId='" + studentId + " " +
+                "studentCode='" + studentCode + " " +
                 ", user=" + user.getFullName() +
                 "email=" + user.getEmail() +
-                ", averageGrade=" + averageGrade +
+                ", averageGrade=" + studentGrade.toString() +
                 '}';
     }
 }

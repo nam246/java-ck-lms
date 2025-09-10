@@ -1,29 +1,56 @@
 package citd.nhom99.ck.model;
 
-import java.util.ArrayList;
-
 public class Teacher {
-
-    private String teacherId;
+    private int userId;
+    private String teacherCode;
     private User user;
-    private String subject;
-    private ArrayList<Classroom> classrooms;
+    private int subjectId;
+    private Subject subject;
+    private int classroomId;
+    private Classroom classroom;
 
     public Teacher() {
     }
 
-    public Teacher(String teacherId, User user, String subject) {
-        this.teacherId = teacherId;
+    public Teacher(String teacherCode, User user) {
+        this.teacherCode = teacherCode;
+        this.user = user;
+    }
+
+    public Teacher(String teacherCode, User user, Subject subject) {
+        this.teacherCode = teacherCode;
         this.user = user;
         this.subject = subject;
     }
 
-    public String getTeacherId() {
-        return teacherId;
+    public Teacher(String teacherCode, User user, Subject subject, Classroom classroom) {
+        this.teacherCode = teacherCode;
+        this.user = user;
+        this.subject = subject;
+        this.classroom = classroom;
     }
 
-    public void setTeacherId(String teacherId) {
-        this.teacherId = teacherId;
+    public Teacher(int userId, String teacherCode, int subjectId, int classroomId) {
+        this.userId = userId;
+        this.teacherCode = teacherCode;
+        this.subjectId = subjectId;
+        this.classroomId = classroomId;
+    }
+
+    public String getTeacherCode() {
+        return teacherCode;
+    }
+
+    public void setTeacherCode(String teacherCode) {
+        this.teacherCode = teacherCode;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public User getUser() {
@@ -34,27 +61,42 @@ public class Teacher {
         this.user = user;
     }
 
-    public String getSubject() {
+    public int getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(int subjectId) {
+        this.subjectId = subjectId;
+    }
+
+    public Subject getSubject() {
         return subject;
     }
 
-    public void setSubject(String subject) {
+    public void setSubject(Subject subject) {
         this.subject = subject;
     }
 
-    public ArrayList<Classroom> getClassrooms() {
-        return classrooms;
+    public int getClassroomId() {
+        return classroomId;
     }
 
-    public void setClassrooms(ArrayList<Classroom> classrooms) {
-        this.classrooms = classrooms;
+    public void setClassroomId(int classroomId) {
+        this.classroomId = classroomId;
+    }
+
+    public Classroom getClassroom() {
+        return classroom;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
     }
 
     @Override
     public String toString() {
         return "Teacher: " +
-                "teacherId='" + teacherId  +
-                ", user=" + user.getFullName() +
-                ", subject='" + subject;
+                "teacherId='" + teacherCode +
+                ", user=" + user.getFullName();
     }
 }

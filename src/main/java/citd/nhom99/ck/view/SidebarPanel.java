@@ -1,14 +1,14 @@
 package citd.nhom99.ck.view;
 
+import citd.nhom99.ck.controller.AppController;
 import citd.nhom99.ck.model.Role;
 import citd.nhom99.ck.model.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class SidebarPanel extends JPanel {
-    public SidebarPanel(DashboardFrame parent, User user) {
+    public SidebarPanel(DashboardFrame parent, User user, AppController controller) {
         setLayout(new GridLayout(8, 1, 0, 10));
         setBackground(new Color(50, 50, 70));
         setPreferredSize(new Dimension(200, 0));
@@ -19,29 +19,22 @@ public class SidebarPanel extends JPanel {
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 14));
         add(welcomeLabel);
 
-        addMenuButton("Trang chủ", parent);
+        addMenuButton("Trang chủ", parent, null);
 
         if (user.getRole() == Role.ADMIN) {
-            addMenuButton("Quản lý Học sinh", parent);
-            addMenuButton("Quản lý Giáo viên", parent);
-            addMenuButton("Quản lý Lớp học", parent);
+            addMenuButton("Quản lý Học sinh", parent, null);
+            addMenuButton("Quản lý Giáo viên", parent, null);
+            addMenuButton("Quản lý Lớp học", parent, null);
         } else if (user.getRole() == Role.TEACHER) {
-            addMenuButton("Lớp học của tôi", parent);
-            addMenuButton("Sinh viên của tôi", parent);
+            addMenuButton("Lớp học của tôi", parent, null);
+            addMenuButton("Sinh viên của tôi", parent, null);
         } else if (user.getRole() == Role.STUDENT) {
-            addMenuButton("Lớp học của tôi", parent);
-            addMenuButton("Điểm số", parent);
+            addMenuButton("Lớp học của tôi", parent, null);
+            addMenuButton("Điểm số", parent, null);
         }
 
-        addMenuButton("Tài khoản", parent);
-        addMenuButton("Đăng xuất", parent, () -> {
-            parent.dispose();
-            new LoginFrame(new citd.nhom99.ck.controller.LMSController()).setVisible(true);
-        });
-    }
-
-    private void addMenuButton(String text, DashboardFrame parent) {
-        addMenuButton(text, parent, null);
+        addMenuButton("Tài khoản", parent, null);
+        addMenuButton("Đăng xuất", parent, controller::logout);
     }
 
     private void addMenuButton(String text, DashboardFrame parent, Runnable action) {

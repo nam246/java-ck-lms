@@ -1,7 +1,6 @@
 import citd.nhom99.ck.config.SchemaManager;
-import citd.nhom99.ck.controller.LMSController;
+import citd.nhom99.ck.controller.AppController;
 import citd.nhom99.ck.config.InitData;
-import citd.nhom99.ck.view.LoginFrame;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,8 +12,8 @@ public class Main {
 
         // 3. Run the application
         javax.swing.SwingUtilities.invokeLater(() -> {
-            LMSController controller = new LMSController();
-            new LoginFrame(controller).setVisible(true);
+            AppController controller = new AppController();
+            controller.start();
         });
     }
 }

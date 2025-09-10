@@ -1,9 +1,8 @@
 package citd.nhom99.ck.view.admin;
 
-import citd.nhom99.ck.dao.StudentDAO;
-import citd.nhom99.ck.dao.UserDAO;
-import citd.nhom99.ck.dao.impl.StudentDAOImpl;
-import citd.nhom99.ck.dao.impl.UserDAOImpl;
+import citd.nhom99.ck.controller.StudentController;
+import citd.nhom99.ck.model.dao.StudentDAO;
+import citd.nhom99.ck.model.dao.UserDAO;
 import citd.nhom99.ck.model.Gender;
 import citd.nhom99.ck.model.Role;
 import citd.nhom99.ck.model.Student;
@@ -15,8 +14,9 @@ import java.awt.*;
 import java.util.List;
 
 public class StudentManagementPanel extends JPanel {
-    private final UserDAO userDAO = new UserDAOImpl();
-    private final StudentDAO studentDAO = new StudentDAOImpl();
+    private final UserDAO userDAO = new UserDAO();
+    private final StudentController studentController = new StudentController();
+    private final StudentDAO studentDAO = new StudentDAO();
     private JTable studentTable;
     private DefaultTableModel tableModel;
 
@@ -73,7 +73,7 @@ public class StudentManagementPanel extends JPanel {
 
         // Tạo table model với các cột
         String[] columnNames = {
-                "ID", "Mã SV", "Họ và tên", "Email", "Số điện thoại", "Giới tính", "Địa chỉ", "Lớp"
+                "ID", "Mã SV", "Họ và tên", "Email", "Số điện thoại", "Giới tính", "Lớp", "Điểm"
         };
 
         tableModel = new DefaultTableModel(columnNames, 0);
@@ -210,7 +210,7 @@ public class StudentManagementPanel extends JPanel {
 
                 User newUser = new User(username, password, fullName, phoneNumber, email, gender, Role.STUDENT);
                 Student newStudent = new Student();
-                newStudent.setStudentId("SV" + newUser.getUserId());
+                newStudent.setStudentCode("SV" + newUser.getUserId());
                 newStudent.setUser(newUser);
 
                 studentDAO.addStudent(newUser);
@@ -239,7 +239,7 @@ public class StudentManagementPanel extends JPanel {
 
         // Lấy thông tin học sinh hiện tại từ table
         Integer userId = (Integer) studentTable.getValueAt(selectedRow, 0);
-        String studentId = (String) studentTable.getValueAt(selectedRow, 1);
+        String studentCode = (String) studentTable.getValueAt(selectedRow, 1);
         String currentFullName = (String) studentTable.getValueAt(selectedRow, 2);
         String currentEmail = (String) studentTable.getValueAt(selectedRow, 3);
         String currentPhoneNumber = (String) studentTable.getValueAt(selectedRow, 4);
@@ -258,7 +258,7 @@ public class StudentManagementPanel extends JPanel {
 
         // Hiển thị thông tin không thể chỉnh sửa
         JLabel userIdLabel = new JLabel(userId.toString());
-        JLabel studentIdLabel = new JLabel(studentId);
+        JLabel studentCodeLabel = new JLabel(studentCode);
 
         // Tạo input field với dữ liệu hiện tại
         JTextField fullNameField = new JTextField(currentFullName, 20);
@@ -276,7 +276,7 @@ public class StudentManagementPanel extends JPanel {
         gbc.gridy = 1;
         formPanel.add(new JLabel("Mã SV:"), gbc);
         gbc.gridx = 1;
-        formPanel.add(studentIdLabel, gbc);
+        formPanel.add(studentCodeLabel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -320,22 +320,6 @@ public class StudentManagementPanel extends JPanel {
                 String newEmail = emailField.getText().trim();
                 String newPhoneNumber = phoneNumberField.getText().trim();
 
-                // Validation
-                if (newFullName.isEmpty()) {
-                    JOptionPane.showMessageDialog(editStudentDialog, "Họ và tên không được để trống!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                if (newEmail.isEmpty() || !newEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                    JOptionPane.showMessageDialog(editStudentDialog, "Email không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                if (newPhoneNumber.isEmpty() || !newPhoneNumber.matches("^[0-9]{10,11}$")) {
-                    JOptionPane.showMessageDialog(editStudentDialog, "Số điện thoại không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
                 // Cập nhật thông tin học sinh
                 // Giả sử bạn có phương thức updateStudent trong DAO
                 User updatedUser = new User();
@@ -365,8 +349,6 @@ public class StudentManagementPanel extends JPanel {
         });
 
         editStudentDialog.setVisible(true);
-
-
     }
 
     private void handleDeleteStudent() {
@@ -389,18 +371,17 @@ public class StudentManagementPanel extends JPanel {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ
 
         try {
-            List<Student> students = studentDAO.getAllStudents();
+            List<Student> students = studentController.getAllStudents();
             for (Student student : students) {
                 Object[] rowData = {
                         student.getUser().getUserId(),
-                        student.getStudentId(),
+                        student.getStudentCode(),
                         student.getUser().getFullName(),
                         student.getUser().getEmail(),
                         student.getUser().getPhoneNumber(),
                         student.getUser().getGender(),
-                        student.getAverageGrade(),
-//                        student.getAddress(),
-//                        student.getClassName() != null ? student.getClassName() : "Chưa có lớp"
+                        student.getClassroom() != null ? student.getClassroom().getClassName() : "Chưa có lớp",
+                        student.getStudentGrade() != null ? student.getStudentGrade().toString() : "Chưa có điểm"
                 };
                 tableModel.addRow(rowData);
             }

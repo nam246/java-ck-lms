@@ -1,7 +1,6 @@
-package citd.nhom99.ck.dao.impl;
+package citd.nhom99.ck.model.dao;
 
 import citd.nhom99.ck.config.DBConfig;
-import citd.nhom99.ck.dao.UserDAO;
 import citd.nhom99.ck.model.Gender;
 import citd.nhom99.ck.model.Role;
 import citd.nhom99.ck.model.User;
@@ -13,9 +12,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAOImpl implements UserDAO {
+public class UserDAO {
 
-    @Override
     public void addUser(User user) {
         String sql = "INSERT INTO users(username, password, full_name, phone_number, email, gender, role) VALUES(?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConfig.getConnection();
@@ -42,7 +40,6 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
-    @Override
     public User getUserById(int userId) {
         String sql = "SELECT * FROM users WHERE user_id = ?";
         try (Connection conn = DBConfig.getConnection();
@@ -58,7 +55,6 @@ public class UserDAOImpl implements UserDAO {
         return null;
     }
 
-    @Override
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
         try (Connection conn = DBConfig.getConnection();
@@ -74,7 +70,6 @@ public class UserDAOImpl implements UserDAO {
         return null;
     }
 
-    @Override
     public List<User> getAllUsers() {
         String sql = "SELECT * FROM users";
         List<User> users = new ArrayList<>();
@@ -90,9 +85,8 @@ public class UserDAOImpl implements UserDAO {
         return users;
     }
 
-    @Override
     public void updateUser(User user) {
-        String sql = "UPDATE users SET username = ?, password = ?, full_name = ?, phone_number = ?, email = ?, role = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET username = ?, password = ?, full_name = ?, phone_number = ?, email = ?, gender = ?, role = ? WHERE user_id = ?";
         try (Connection conn = DBConfig.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
@@ -100,15 +94,15 @@ public class UserDAOImpl implements UserDAO {
             pstmt.setString(3, user.getFullName());
             pstmt.setString(4, user.getPhoneNumber());
             pstmt.setString(5, user.getEmail());
-            pstmt.setString(6, user.getRole().name());
-            pstmt.setInt(7, user.getUserId());
+            pstmt.setString(6, user.getGender().name());
+            pstmt.setString(7, user.getRole().name());
+            pstmt.setInt(8, user.getUserId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    @Override
     public void deleteUser(int userId) {
         String sql = "DELETE FROM users WHERE user_id = ?";
         try (Connection conn = DBConfig.getConnection();
@@ -120,7 +114,6 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
-    @Override
     public boolean isUsernameExists(String username) {
         String sql = "SELECT COUNT(*) FROM users WHERE username = ?";
         try (Connection conn = DBConfig.getConnection();

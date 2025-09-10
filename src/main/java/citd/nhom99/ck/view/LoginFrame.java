@@ -1,17 +1,16 @@
 package citd.nhom99.ck.view;
 
-import citd.nhom99.ck.controller.LMSController;
-import citd.nhom99.ck.model.User;
+import citd.nhom99.ck.controller.AppController;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class LoginFrame extends JFrame {
-    private final LMSController controller;
+    private final AppController controller;
     private JTextField usernameField;
     private JPasswordField passwordField;
 
-    public LoginFrame(LMSController controller) {
+    public LoginFrame(AppController controller) {
         this.controller = controller;
         setTitle("Login - LMS");
         setSize(400, 250);
@@ -65,14 +64,10 @@ public class LoginFrame extends JFrame {
     private void handleLogin() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
+        controller.login(username, password);
+    }
 
-        User user = controller.login(username, password);
-
-        if (user != null) {
-            dispose();
-            new DashboardFrame(user).setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(this, "Invalid username or password", "Login Failed", JOptionPane.ERROR_MESSAGE);
-        }
+    public void showLoginError() {
+        JOptionPane.showMessageDialog(this, "Invalid username or password", "Login Failed", JOptionPane.ERROR_MESSAGE);
     }
 }

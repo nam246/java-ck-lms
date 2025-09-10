@@ -1,63 +1,92 @@
 package citd.nhom99.ck.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Classroom {
-    private String classId;
+    private int classId;
     private String className;
-    private Teacher GVCN;
-    private ArrayList<Teacher> teachers;
-    private ArrayList<Student> students;
+    private int GVCNId;
+    private Teacher teacher;
+    private List<Student> students = new ArrayList<>();
 
-    public Classroom(String classId, String className, Teacher GVCN, ArrayList<Student> students) {
-        this.classId = classId;
-        this.className = className;
-        this.GVCN = GVCN;
-        this.students = students;
+    public Classroom() {
     }
 
-    public Classroom(String classId, String className, Teacher GVCN, ArrayList<Teacher> teachers, ArrayList<Student> students) {
-        this.classId = classId;
+    public Classroom(String className) {
         this.className = className;
-        this.GVCN = GVCN;
-        this.teachers = teachers;
-        this.students = students;
     }
 
-    // Getters and setters
-    public String getClassId() {
+    public Classroom(String className, int GVCNId) {
+        this.className = className;
+        this.GVCNId = GVCNId;
+    }
+
+    public Classroom(String className, Teacher teacher) {
+        this.className = className;
+        this.teacher = teacher;
+    }
+
+    public Classroom(int classId, String className, int GVCNId) {
+        this.classId = classId;
+        this.className = className;
+        this.GVCNId = GVCNId;
+    }
+
+    public Classroom(int classId, String className, Teacher teacher) {
+        this.classId = classId;
+        this.className = className;
+        this.teacher = teacher;
+    }
+
+    public int getClassId() {
         return classId;
+    }
+
+    public void setClassId(int classId) {
     }
 
     public String getClassName() {
         return className;
     }
 
-    public String getTeacherId() {
-        return GVCN.getTeacherId();
+    public int getTeacherId() {
+        return GVCNId;
     }
 
-    public ArrayList<Teacher> getTeachers() {
-        return teachers;
+    public void setTeacherId(int GVCNId) {
     }
 
-    public ArrayList<Student> getStudents() {
-        return students;
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 
     public void setClassName(String className) {
         this.className = className;
     }
 
-    public void addStudent(String studentId) {
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+
+
+    public void addStudent(String studentCode) {
 
     }
 
-    public void removeStudent(String studentId) {
+    public void removeStudent(String studentCode) {
 
     }
 
     public String toString() {
-        return "Lớp" + getClassName() + ": " + "GVCN: " + GVCN.getTeacherId() + " Mon chu nhiem: " + GVCN.getSubject();
+        return "Lớp" + getClassName() + ": " + "GVCN: " + getTeacherId();
     }
 }
