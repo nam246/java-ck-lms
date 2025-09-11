@@ -32,16 +32,6 @@ public class AppController {
 
     public void logout() {
         dashboardFrame.dispose();
-        start(); // Show the login frame again
-    }
-
-    public void addUser(User user) {
-        userDAO.addUser(user);
-        System.out.println("Controller: Adding user " + user.getUserId());
-    }
-
-    public void updateUser(User user) {
-        userDAO.updateUser(user);
-        System.out.println("Controller: Updating user info for user " + user.getUserId());
+        start();
     }
 }

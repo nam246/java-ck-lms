@@ -2,7 +2,6 @@ package citd.nhom99.ck.view.admin;
 
 import citd.nhom99.ck.controller.ClassroomController;
 import citd.nhom99.ck.model.Teacher;
-import citd.nhom99.ck.model.dao.ClassroomDAO;
 import citd.nhom99.ck.model.Classroom;
 
 import javax.swing.*;
@@ -13,7 +12,7 @@ import java.util.List;
 public class ClassroomManagementPanel extends JPanel {
     private JTable classroomTable;
     private DefaultTableModel tableModel;
-    private ClassroomController classroomController = new ClassroomController();
+    private final ClassroomController classroomController = new ClassroomController();
     private JButton addButton, editButton, deleteButton, refreshButton;
 
     public ClassroomManagementPanel() {
@@ -51,7 +50,7 @@ public class ClassroomManagementPanel extends JPanel {
     }
 
     private JScrollPane createTablePanel() {
-        String[] columnNames = {"ID Lớp", "Tên lớp", "GVCN", "Sĩ số"};
+        String[] columnNames = {"ID Lớp", "Tên lớp", "GVCN", "Sĩ số", "Thời khóa biểu của lớp"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -65,18 +64,20 @@ public class ClassroomManagementPanel extends JPanel {
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        // Bỏ Add lớp học đi, lớp học sẽ có sẵn
+        // Nút edit lớp học sẽ không cho phép đổi tên, chỉ cho phép thay giáo viên chủ nhiệm
 
-        addButton = new JButton("Thêm lớp học");
+//        addButton = new JButton("Thêm lớp học");
         editButton = new JButton("Sửa thông tin");
         deleteButton = new JButton("Xóa lớp học");
         refreshButton = new JButton("Làm mới");
 
-        addButton.addActionListener(e -> handleAddClassroom());
+//        addButton.addActionListener(e -> handleAddClassroom());
         editButton.addActionListener(e -> handleEditClassroom());
         deleteButton.addActionListener(e -> handleDeleteClassroom());
         refreshButton.addActionListener(e -> loadClassroomData());
 
-        buttonPanel.add(addButton);
+//        buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(refreshButton);
@@ -85,21 +86,22 @@ public class ClassroomManagementPanel extends JPanel {
     }
 
     private void handleAddClassroom() {
-        JTextField classIdField = new JTextField();
         JTextField classNameField = new JTextField();
+        JComboBox<Teacher> classTeacherField = new JComboBox<>();
+        classTeacherField.setEditable(true);
         final JComponent[] inputs = new JComponent[]{
                 new JLabel("Tên lớp"),
-                classIdField,
+                classNameField,
                 new JLabel("Giáo viên chủ nhiệm"),
-                classNameField
+                classTeacherField
         };
         int result = JOptionPane.showConfirmDialog(this, inputs, "Thêm lớp học mới", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            String classId = classIdField.getText();
-            String className = classNameField.getText();
+            String classId = classNameField.getText();
+            String className = (String) classTeacherField.getSelectedItem();
             if (classId != null && !classId.trim().isEmpty() && className != null && !className.trim().isEmpty()) {
                 Classroom newClassroom = new Classroom(className);
-//                classroomDAO.addClassroom(newClassroom);
+                classroomController.createClassroom(newClassroom);
                 loadClassroomData();
             } else {
                 JOptionPane.showMessageDialog(this, "ID và tên lớp không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);

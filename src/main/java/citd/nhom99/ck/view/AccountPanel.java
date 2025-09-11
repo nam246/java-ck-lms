@@ -1,7 +1,7 @@
 package citd.nhom99.ck.view;
 
 import citd.nhom99.ck.controller.AppController;
-import citd.nhom99.ck.model.Gender;
+import citd.nhom99.ck.model.constant.Gender;
 import citd.nhom99.ck.model.User;
 
 import javax.swing.*;
@@ -137,7 +137,7 @@ public class AccountPanel extends JPanel {
         user.setGender((Gender) genderComboBox.getSelectedItem());
 
         // Call the controller to save the changes
-        controller.updateUser(user);
+//        controller.updateUser(user);
 
         setFieldsEditable(false);
         JOptionPane.showMessageDialog(this, "Thông tin đã được cập nhật.", "Thành công", JOptionPane.INFORMATION_MESSAGE);

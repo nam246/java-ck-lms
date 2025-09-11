@@ -1,9 +1,12 @@
 package citd.nhom99.ck.model.dao;
 
 import citd.nhom99.ck.config.DBConfig;
+import citd.nhom99.ck.model.constant.Role;
 import citd.nhom99.ck.model.Teacher;
 import citd.nhom99.ck.model.User;
+import citd.nhom99.ck.utils.Helper;
 import citd.nhom99.ck.utils.QueryHelper;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,12 +15,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeacherDAO {
-
     private final UserDAO userDAO = new UserDAO();
 
-    public void addTeacher(User teacher) {
-        System.out.println(teacher.toString());
-        QueryHelper.insertTeacher(teacher);
+    public TeacherDAO() {
+    }
+
+    public void createTeacher(User teacher) {
+        String sql = "INSERT INTO teachers(user_id, teacher_code) VALUES(?, ?)";
+        try (Connection conn = DBConfig.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
+
+            userDAO.createUser(teacher, Role.TEACHER);
+
+            pstmt.setInt(1, teacher.getUserId());
+            pstmt.setString(2, Helper.codeGenerate(teacher.getUserId(), teacher.getRole()));
+            pstmt.executeUpdate();
+
+            conn.commit();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to add teacher: " + e.getMessage(), e);
+        }
+    }
+
+    public void createTeacher(User newUser, int subjectId) {
+        String sql = "INSERT INTO teachers(user_id, teacher_code, subject_id) VALUES(?, ?, ?)";
+        try (Connection conn = DBConfig.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
+
+            userDAO.createUser(newUser, Role.TEACHER);
+
+            pstmt.setInt(1, newUser.getUserId());
+            pstmt.setString(2, Helper.codeGenerate(newUser.getUserId(), newUser.getRole()));
+            pstmt.setInt(3, subjectId);
+            pstmt.executeUpdate();
+
+            conn.commit();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to add teacher: " + e.getMessage(), e);
+        }
     }
 
     public Teacher getTeacherById(int teacherId) {
@@ -48,10 +85,8 @@ public class TeacherDAO {
     }
 
     public void updateTeacher(Teacher teacher) {
-        // First, update the user in the users table
         userDAO.updateUser(teacher.getUser());
 
-        // Then, update the teacher in the teachers table
         String sql = "UPDATE teachers SET subject_id = ? WHERE teacher_code = ?";
         try (Connection conn = DBConfig.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, teacher.getSubjectId());
@@ -69,11 +104,8 @@ public class TeacherDAO {
     private Teacher extractTeacherFromResultSet(ResultSet rs) throws SQLException {
         Teacher teacher = new Teacher();
         teacher.setTeacherCode(rs.getString("teacher_code"));
+        teacher.setUser(userDAO.getUserById(rs.getInt("user_id")));
         teacher.setSubjectId(rs.getInt("subject_id"));
-
-        // Get the associated user
-        User user = userDAO.getUserById(rs.getInt("user_id"));
-        teacher.setUser(user);
 
         return teacher;
     }

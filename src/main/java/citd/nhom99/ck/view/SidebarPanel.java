@@ -1,7 +1,7 @@
 package citd.nhom99.ck.view;
 
 import citd.nhom99.ck.controller.AppController;
-import citd.nhom99.ck.model.Role;
+import citd.nhom99.ck.model.constant.Role;
 import citd.nhom99.ck.model.User;
 
 import javax.swing.*;

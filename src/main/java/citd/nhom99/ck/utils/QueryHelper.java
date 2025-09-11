@@ -2,7 +2,7 @@ package citd.nhom99.ck.utils;
 
 import citd.nhom99.ck.config.DBConfig;
 import citd.nhom99.ck.model.Classroom;
-import citd.nhom99.ck.model.Role;
+import citd.nhom99.ck.model.constant.Role;
 import citd.nhom99.ck.model.User;
 
 import java.sql.*;

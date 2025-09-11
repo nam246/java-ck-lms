@@ -55,6 +55,7 @@ public class Classroom {
     }
 
     public void setTeacherId(int GVCNId) {
+        this.GVCNId = GVCNId;
     }
 
     public Teacher getTeacher() {
@@ -77,7 +78,6 @@ public class Classroom {
         this.students = students;
     }
 
-
     public void addStudent(String studentCode) {
 
     }
@@ -86,7 +86,8 @@ public class Classroom {
 
     }
 
+    @Override
     public String toString() {
-        return "Lớp" + getClassName() + ": " + "GVCN: " + getTeacherId();
+        return "Lớp" + getClassId() + " " + getClassName() + ": " + "GVCN: " + getTeacherId();
     }
 }

@@ -11,11 +11,19 @@ public class ClassroomController {
     public ClassroomController() {
     }
 
+    public void createClassroom(Classroom classroom) {
+        classroomDAO.createClassroom(classroom);
+    }
+
     public List<Classroom> getAllClassrooms() {
         return classroomDAO.getAllClassrooms();
     }
 
     public Classroom getClassroomById(int id) {
         return this.classroomDAO.getClassroomById(id);
+    }
+
+    public void updateClassroom(Classroom classroom) {
+        classroomDAO.updateClassroom(classroom);
     }
 }

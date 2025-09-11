@@ -23,7 +23,7 @@ public class Teacher {
         this.subject = subject;
     }
 
-    public Teacher(String teacherCode, User user, Subject subject, Classroom classroom) {
+    public Teacher(User user, String teacherCode, Subject subject, Classroom classroom) {
         this.teacherCode = teacherCode;
         this.user = user;
         this.subject = subject;
@@ -96,7 +96,10 @@ public class Teacher {
     @Override
     public String toString() {
         return "Teacher: " +
-                "teacherId='" + teacherCode +
-                ", user=" + user.getFullName();
+                "userId=" + userId +
+                ", teacherCode='" + teacherCode +
+                ", user=" + user.getFullName() +
+                ", subject=" + subject.getSubjectName() +
+                ", classroom=" + classroom.getClassName();
     }
 }

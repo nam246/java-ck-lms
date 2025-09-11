@@ -4,10 +4,8 @@ import citd.nhom99.ck.config.DBConfig;
 import citd.nhom99.ck.model.Classroom;
 import citd.nhom99.ck.model.Student;
 import citd.nhom99.ck.utils.QueryHelper;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +14,27 @@ public class ClassroomDAO {
     private final TeacherDAO teacherDAO = new TeacherDAO();
     private final StudentDAO studentDAO = new StudentDAO();
 
-    public void addClassroom(Classroom classroom) {
-        QueryHelper.insertClassroom(classroom);
+    public int createClassroom(Classroom newClassroom) {
+        String sql = "INSERT INTO classrooms(class_name, gvcn_id) VALUES(?, ?)";
+        try (Connection conn = DBConfig.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, newClassroom.getClassName());
+            if (newClassroom.getTeacherId() != 0) {
+                pstmt.setInt(2, newClassroom.getTeacherId());
+            }
+            pstmt.executeUpdate();
+
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Creating classroom failed, no ID obtained.");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("Failed to add classroom: " + e.getMessage(), e);
+        }
     }
 
     public Classroom getClassroomById(int id) {

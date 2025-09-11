@@ -1,5 +1,8 @@
 package citd.nhom99.ck.model;
 
+import citd.nhom99.ck.model.constant.Gender;
+import citd.nhom99.ck.model.constant.Role;
+
 public class User {
     private int userId;
     private String username;
@@ -10,11 +13,9 @@ public class User {
     private Role role;
     private Gender gender;
 
-    // Default constructor
     public User() {
     }
 
-    // Constructor with all fields
     public User(String username, String password, String fullName, String phoneNumber, String email, Gender gender, Role role) {
         this.username = username;
         this.password = password;
@@ -25,7 +26,17 @@ public class User {
         this.role = role;
     }
 
-    // Getters and Setters
+    public User(int userId, String username, String password, String fullName, String phoneNumber, String email, Gender gender, Role role) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.gender = gender;
+        this.role = role;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -90,6 +101,7 @@ public class User {
         this.gender = gender;
     }
 
+    @Override
     public String toString() {
         return "User: " +
                 "userId=" + userId +

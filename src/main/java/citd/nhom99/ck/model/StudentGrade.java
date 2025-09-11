@@ -1,5 +1,7 @@
 package citd.nhom99.ck.model;
 
+import citd.nhom99.ck.model.constant.Classified;
+
 public class StudentGrade {
 
     private int id;
@@ -7,7 +9,8 @@ public class StudentGrade {
     private double midtermGrade;
     private double finalGrade;
     private double averageGrade;
-    private String classified;
+    private Classified classified;
+    private int semester;
     private int academicYear;
     private int studentId;
     private Student student;
@@ -17,15 +20,49 @@ public class StudentGrade {
     public StudentGrade() {
     }
 
-    public StudentGrade(double regularGrade, double midtermGrade, double finalGrade, double averageGrade, String classified, int academicYear, int studentId, Subject subject) {
+    public StudentGrade(int studentId) {
+        this.studentId = studentId;
+    }
+
+    public StudentGrade(Student student) {
+        this.student = student;
+    }
+
+    public StudentGrade(int studentId, double regularGrade, double midtermGrade, double finalGrade, double averageGrade, Classified classified, int semester, int academicYear, int subjectId) {
+        this.studentId = studentId;
         this.regularGrade = regularGrade;
         this.midtermGrade = midtermGrade;
         this.finalGrade = finalGrade;
         this.averageGrade = averageGrade;
         this.classified = classified;
+        this.semester = semester;
         this.academicYear = academicYear;
-        this.studentId = studentId;
+        this.subjectId = subjectId;
+    }
+
+    public StudentGrade(Student student, double regularGrade, double midtermGrade, double finalGrade, double averageGrade, Classified classified, int semester, int academicYear, Subject subject) {
+        this.student = student;
+        this.regularGrade = regularGrade;
+        this.midtermGrade = midtermGrade;
+        this.finalGrade = finalGrade;
+        this.averageGrade = averageGrade;
+        this.classified = classified;
+        this.semester = semester;
+        this.academicYear = academicYear;
         this.subject = subject;
+    }
+
+    public StudentGrade(int id, int studentId, double regularGrade, double midtermGrade, double finalGrade, double averageGrade, Classified classified, int semester, int academicYear, int subjectId) {
+        this.id = id;
+        this.studentId = studentId;
+        this.regularGrade = regularGrade;
+        this.midtermGrade = midtermGrade;
+        this.finalGrade = finalGrade;
+        this.averageGrade = averageGrade;
+        this.classified = classified;
+        this.semester = semester;
+        this.academicYear = academicYear;
+        this.subjectId = subjectId;
     }
 
     public int getId() {
@@ -68,12 +105,20 @@ public class StudentGrade {
         this.averageGrade = averageGrade;
     }
 
-    public String getClassified() {
+    public Classified getClassified() {
         return classified;
     }
 
-    public void setClassified(String classified) {
+    public void setClassified(Classified classified) {
         this.classified = classified;
+    }
+
+    public int getSemester() {
+        return semester;
+    }
+
+    public void setSemester(int semester) {
+        this.semester = semester;
     }
 
     public int getAcademicYear() {
@@ -116,8 +161,29 @@ public class StudentGrade {
         this.subject = subject;
     }
 
+    public double averageGradeCalculate() {
+        double averageGrade = 0;
+        if (this.regularGrade == 0 && this.midtermGrade == 0 && this.finalGrade == 0) {
+            return 0;
+        }
+        averageGrade = (this.regularGrade + this.midtermGrade * 2 + this.finalGrade * 3) / 6;
+        setAverageGrade(averageGrade);
+        return averageGrade;
+    }
+
     @Override
     public String toString() {
-        return "StudentGrade{" + "id=" + id + ", regularGrade=" + regularGrade + ", midtermGrade=" + midtermGrade + ", finalGrade=" + finalGrade + ", averageGrade=" + averageGrade + ", classified=" + classified + ", academicYear=" + academicYear + ", studentId=" + studentId + ", student=" + student + ", subjectId=" + subjectId + ", subject=" + subject + '}';
+        return "StudentGrade" +
+                "id=" + id +
+                "regularGrade=" + regularGrade +
+                "midtermGrade=" + midtermGrade +
+                "finalGrade=" + finalGrade +
+                "averageGrade=" + averageGrade +
+                "classified=" + classified +
+                "academicYear=" + academicYear +
+                "studentId=" + studentId +
+                "student=" + student +
+                "subjectId=" + subjectId +
+                "subject=" + subject;
     }
 }

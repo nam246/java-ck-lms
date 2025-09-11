@@ -42,7 +42,7 @@ public class SchemaManager {
             CREATE TABLE IF NOT EXISTS classrooms (
                 class_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 class_name TEXT NOT NULL UNIQUE,
-                gvcn_id INTEGER,
+                gvcn_id INTEGER NULL,
                 FOREIGN KEY (gvcn_id) REFERENCES teachers(user_id) ON DELETE CASCADE
             );
             """;
@@ -55,18 +55,18 @@ public class SchemaManager {
                 class_id INTEGER,
                 FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
                 FOREIGN KEY (class_id) REFERENCES classrooms(class_id) ON DELETE CASCADE,
-                FOREIGN KEY (grade_id) REFERENCES student_grade(id) ON DELETE CASCADE
+                FOREIGN KEY (grade_id) REFERENCES student_grades(id) ON DELETE CASCADE
             );
             """;
 
     private static final String CREATE_STUDENT_GRADE_TABLE = """
-            CREATE TABLE IF NOT EXISTS student_grade (
+            CREATE TABLE IF NOT EXISTS student_grades (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                regular_grade REAL DEFAULT 0.0,
-                midterm_grade REAL DEFAULT 0.0,
-                final_grade REAL DEFAULT 0.0,
-                average_grade REAL DEFAULT 0.0,
-                classified TEXT DEFAULT '',
+                regular_grade REAL DEFAULT 0.0 CHECK(regular_grade >= 0 AND regular_grade <= 10),
+                midterm_grade REAL DEFAULT 0.0 CHECK(midterm_grade >= 0 AND midterm_grade <= 10),
+                final_grade REAL DEFAULT 0.0 CHECK(final_grade >= 0 AND final_grade <= 10),
+                average_grade REAL DEFAULT 0.0 CHECK(average_grade >= 0 AND average_grade <= 10),
+                classified TEXT CHECK(classified IN ('YEU', 'TRUNG_BINH', 'KHA', 'GIOI', 'XUAT_SAC')),
                 semester INTEGER CHECK(semester IN (1, 2)),
                 academic_year INTEGER CHECK(academic_year IN (10, 11, 12)),
                 student_id INTEGER NOT NULL,

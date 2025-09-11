@@ -12,28 +12,28 @@ public class Student {
     public Student() {
     }
 
-    public Student(String studentCode, User user) {
-        this.studentCode = studentCode;
+    public Student(User user, String studentCode) {
         this.user = user;
+        this.studentCode = studentCode;
     }
 
-    public Student(String studentCode, User user, StudentGrade studentGrade) {
+    public Student(int userId, String studentCode) {
+        this.userId = userId;
         this.studentCode = studentCode;
+    }
+
+    public Student(User user, String studentCode, StudentGrade studentGrade, Classroom classroom) {
         this.user = user;
+        this.studentCode = studentCode;
         this.studentGrade = studentGrade;
+        this.classroom = classroom;
     }
 
-    public Student(String studentCode, int studentGradeId, int classroomId) {
+    public Student(int userId, String studentCode, int studentGradeId, int classroomId) {
+        this.userId = userId;
         this.studentCode = studentCode;
         this.studentGradeId = studentGradeId;
         this.classroomId = classroomId;
-    }
-
-    public Student(String studentCode, User user, StudentGrade studentGrade, Classroom classroom) {
-        this.studentCode = studentCode;
-        this.user = user;
-        this.studentGrade = studentGrade;
-        this.classroom = classroom;
     }
 
     public int getUserId() {
@@ -58,6 +58,14 @@ public class Student {
 
     public void setStudentCode(String studentCode) {
         this.studentCode = studentCode;
+    }
+
+    public int getStudentGradeId() {
+        return studentGradeId;
+    }
+
+    public void setStudentGradeId(int studentGradeId) {
+        this.studentGradeId = studentGradeId;
     }
 
     public StudentGrade getStudentGrade() {
@@ -86,12 +94,11 @@ public class Student {
 
     @Override
     public String toString() {
-        return "Student{" +
+        return "Student:" +
                 "userId=" + user.getUserId() +
-                "studentCode='" + studentCode + " " +
-                ", user=" + user.getFullName() +
+                "studentCode='" + studentCode +
+                "user=" + user.getFullName() +
                 "email=" + user.getEmail() +
-                ", averageGrade=" + studentGrade.toString() +
-                '}';
+                "grade=" + studentGrade.toString();
     }
 }

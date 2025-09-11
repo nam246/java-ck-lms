@@ -3,8 +3,8 @@ package citd.nhom99.ck.view.admin;
 import citd.nhom99.ck.controller.StudentController;
 import citd.nhom99.ck.model.dao.StudentDAO;
 import citd.nhom99.ck.model.dao.UserDAO;
-import citd.nhom99.ck.model.Gender;
-import citd.nhom99.ck.model.Role;
+import citd.nhom99.ck.model.constant.Gender;
+import citd.nhom99.ck.model.constant.Role;
 import citd.nhom99.ck.model.Student;
 import citd.nhom99.ck.model.User;
 
@@ -16,7 +16,6 @@ import java.util.List;
 public class StudentManagementPanel extends JPanel {
     private final UserDAO userDAO = new UserDAO();
     private final StudentController studentController = new StudentController();
-    private final StudentDAO studentDAO = new StudentDAO();
     private JTable studentTable;
     private DefaultTableModel tableModel;
 
@@ -112,7 +111,7 @@ public class StudentManagementPanel extends JPanel {
         refreshButton.setForeground(Color.WHITE);
 
         // Thêm action listeners
-        addButton.addActionListener(e -> handleAddStudent());
+        addButton.addActionListener(e -> handleCreateStudent());
         editButton.addActionListener(e -> handleEditStudent());
         deleteButton.addActionListener(e -> handleDeleteStudent());
         refreshButton.addActionListener(e -> loadStudentData());
@@ -125,7 +124,7 @@ public class StudentManagementPanel extends JPanel {
         return buttonPanel;
     }
 
-    private void handleAddStudent() {
+    private void handleCreateStudent() {
         System.out.println("Add student clicked");
         // Tạo form Dialog để nhập thông tin học sinh
         JDialog addNewStudentDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm học sinh mới", true);
@@ -208,12 +207,9 @@ public class StudentManagementPanel extends JPanel {
                 String phoneNumber = phoneNumberField.getText();
                 Gender gender = genderField.getItemAt(genderField.getSelectedIndex());
 
-                User newUser = new User(username, password, fullName, phoneNumber, email, gender, Role.STUDENT);
-                Student newStudent = new Student();
-                newStudent.setStudentCode("SV" + newUser.getUserId());
-                newStudent.setUser(newUser);
+                User newStudent = new User(username, password, fullName, phoneNumber, email, gender, Role.STUDENT);
 
-                studentDAO.addStudent(newUser);
+                studentController.createStudent(newStudent);
                 JOptionPane.showMessageDialog(addNewStudentDialog, "Thêm học sinh thành công.", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                 System.out.println("New student added," + newStudent);
 
@@ -321,15 +317,14 @@ public class StudentManagementPanel extends JPanel {
                 String newPhoneNumber = phoneNumberField.getText().trim();
 
                 // Cập nhật thông tin học sinh
-                // Giả sử bạn có phương thức updateStudent trong DAO
                 User updatedUser = new User();
                 updatedUser.setUserId(userId);
                 updatedUser.setFullName(newFullName);
                 updatedUser.setEmail(newEmail);
                 updatedUser.setPhoneNumber(newPhoneNumber);
 
-                // Gọi phương thức update trong DAO
-                userDAO.updateUser(updatedUser); // Bạn cần implement phương thức này
+                // Gọi phương thức update trong Controller
+                studentController.updateStudent(updatedUser);
 
                 // Cập nhật dữ liệu trong table
                 studentTable.setValueAt(newFullName, selectedRow, 2);
@@ -340,7 +335,8 @@ public class StudentManagementPanel extends JPanel {
 
                 // Đóng dialog và refresh dữ liệu
                 editStudentDialog.dispose();
-                loadStudentData(); // Refresh toàn bộ dữ liệu từ database
+                // Refresh toàn bộ dữ liệu từ database
+                loadStudentData();
 
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(editStudentDialog, "Lỗi khi cập nhật thông tin: " + exception.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -362,13 +358,13 @@ public class StudentManagementPanel extends JPanel {
         int userId = (int) studentTable.getValueAt(selectedRow, 0);
         int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc xóa dữ liệu này?" + userId);
         if (confirm == JOptionPane.YES_OPTION) {
-            System.out.println("Deleted User ID: " + userId);
-            userDAO.deleteUser(userId);
+            studentController.deleteStudent(userId);
+            loadStudentData();
         }
     }
 
     private void loadStudentData() {
-        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        tableModel.setRowCount(0);
 
         try {
             List<Student> students = studentController.getAllStudents();

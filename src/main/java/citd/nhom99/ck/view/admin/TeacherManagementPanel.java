@@ -1,8 +1,8 @@
 package citd.nhom99.ck.view.admin;
 
 import citd.nhom99.ck.controller.TeacherController;
-import citd.nhom99.ck.model.Gender;
-import citd.nhom99.ck.model.Role;
+import citd.nhom99.ck.model.constant.Gender;
+import citd.nhom99.ck.model.constant.Role;
 import citd.nhom99.ck.model.Teacher;
 import citd.nhom99.ck.model.User;
 
@@ -189,8 +189,8 @@ public class TeacherManagementPanel extends JPanel {
                 String phoneNumber = phoneNumberField.getText();
                 Gender gender = (Gender) genderField.getSelectedItem();
 
-                User newUser = new User(username, password, fullName, phoneNumber, email, gender, Role.TEACHER);
-                teacherController.addTeacher(newUser);
+                User newTeacher = new User(username, password, fullName, phoneNumber, email, gender, Role.TEACHER);
+                teacherController.createTeacher(newTeacher);
                 JOptionPane.showMessageDialog(addNewTeacherDialog, "Thêm giáo viên thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                 addNewTeacherDialog.dispose();
                 loadTeacherData();

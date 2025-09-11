@@ -1,11 +1,12 @@
 package citd.nhom99.ck.config;
 
 import citd.nhom99.ck.model.*;
-import citd.nhom99.ck.utils.Helper;
+import citd.nhom99.ck.model.constant.Gender;
+import citd.nhom99.ck.model.constant.Role;
+import citd.nhom99.ck.model.dao.ClassroomDAO;
 import citd.nhom99.ck.utils.QueryHelper;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,7 +16,7 @@ public class InitData {
     public static void seedDatabaseIfEmpty() {
         if (isDatabaseEmpty()) {
             System.out.println("Database is empty. Seeding with sample data...");
-            insertSampleData();
+            createSampleData();
         } else {
             System.out.println("Database already contains data. Skipping seeding.");
         }
@@ -33,7 +34,7 @@ public class InitData {
         return false;
     }
 
-    private static void insertSampleData() {
+    private static void createSampleData() {
         // Admin
         User admin = new User("admin", "admin", "Admin", "0987654321", "admin@admin.edu.vn", Gender.MALE, Role.ADMIN);
         QueryHelper.insertUser(admin, Role.ADMIN);
@@ -91,9 +92,26 @@ public class InitData {
         QueryHelper.insertTeacher(teacher8, 8);
 
         // Thêm lớp
+        ClassroomDAO classroomDAO = new ClassroomDAO();
+
         Classroom class10A1 = new Classroom("10A1", 12);
+        Classroom class10A2 = new Classroom("10A2");
+        Classroom class10A3 = new Classroom("10A3");
+        Classroom class11B1 = new Classroom("11B1");
         Classroom class11B2 = new Classroom("11B2", 13);
-        QueryHelper.insertClassroom(class10A1);
-        QueryHelper.insertClassroom(class11B2);
+        Classroom class11B3 = new Classroom("11B3");
+        Classroom class12C1 = new Classroom("12C1");
+        Classroom class12C2 = new Classroom("12C2");
+        Classroom class12C3 = new Classroom("12C3", 14);
+
+        classroomDAO.createClassroom(class10A1);
+        classroomDAO.createClassroom(class10A2);
+        classroomDAO.createClassroom(class10A3);
+        classroomDAO.createClassroom(class11B1);
+        classroomDAO.createClassroom(class11B2);
+        classroomDAO.createClassroom(class11B3);
+        classroomDAO.createClassroom(class12C1);
+        classroomDAO.createClassroom(class12C2);
+        classroomDAO.createClassroom(class12C3);
     }
 }

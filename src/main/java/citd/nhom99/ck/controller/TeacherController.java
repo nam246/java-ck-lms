@@ -20,12 +20,12 @@ public class TeacherController {
         return this.teacherDAO.getTeacherById(id);
     }
 
-    public void addTeacher(User user) {
+    public void createTeacher(User user) {
         if (user == null) {
             System.out.println("Controller: User is null");
             return;
         }
-        this.teacherDAO.addTeacher(user);
+        this.teacherDAO.createTeacher(user);
         System.out.println("Controller: Added teacher " + user.getUserId());
     }
 
@@ -39,7 +39,7 @@ public class TeacherController {
     }
 
     public void updateTeacher(Teacher teacher) {
-        teacherDAO.updateTeacher(teacher);
+        this.teacherDAO.updateTeacher(teacher);
         System.out.println("Controller: Updating teacher info for teacher " + teacher.getTeacherCode());
     }
 }
